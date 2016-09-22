@@ -1,0 +1,5 @@
+CS 4753 Milestone 1 Comments
+
+- add reviews to the home page
+- add a sign up button to the about us page
+- add a section about the creators in the about us page
