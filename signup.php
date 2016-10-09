@@ -1,4 +1,34 @@
-<!DOCTYPE HTML>
+<?php
+
+	$db = new mysqli('localhost', 'root', 'password', 'cs4753');
+
+	if (isset($_POST['firstname']) && isset($_POST['email']) && isset($_POST['zipcode'])) {
+	  	$firstName = $_POST["firstname"];
+	  	$lastName = $_POST["lastname"];
+	  	$email = $_POST["email"];
+	  	$address = $_POST["address"];
+	  	$city = $_POST["city"];
+	  	$state = $_POST["state"];
+	  	$zipcode = $_POST["zipcode"];
+	  	
+	  	//escape everything
+	  	$firstName = mysql_real_escape_string(trim($firstName));
+       	$lastName = mysql_real_escape_string(trim($lastName));
+       	$email = mysql_real_escape_string(trim($email));
+       	$address = mysql_real_escape_string(trim($address));
+       	$city = mysql_real_escape_string(trim($city));
+       	$state = mysql_real_escape_string(trim($state));
+       	$zipcode = mysql_real_escape_string(trim($zipcode));
+
+       	$query = "INSERT INTO siteUsers VALUES('userNum', '$firstName', '$lastName', '$email', '$address', '$city', '$state', '$zipcode')";
+       	$db->query($query) or die ("Invalid insert " . $db->error);
+
+       	echo '<script language="javascript">';
+		echo 'alert("You have successfully signed up!")';
+		echo '</script>';
+    }
+?>
+
 <!--
 	Twenty by HTML5 UP
 	html5up.net | @ajlkn
@@ -24,7 +54,7 @@
 						<ul>
 							<li class="current"><a href="index.html">Home</a></li>
 							<li class="current"><a href="aboutus.html">About Us</a></li>
-							<li><a href="signup.html" class="button special">Sign Up</a></li>
+							<li><a href="signup.php" class="button special">Sign Up</a></li>
 						</ul>
 					</nav>
 				</header>
@@ -44,7 +74,7 @@
 							<!-- Content -->
 								<div class="content">
 									<section>
-										<form action="submit.php" method="post">
+										<form action="signup.php" method="post">
   											First Name: 
 											<input type="text" name="firstname">
 											Last name:
@@ -59,7 +89,7 @@
 											<input type="text" name="state">
 											ZipCode: 
 											<input type="text" name="zipcode">
-											<input type="submit" class="button special" value="Submit">
+											<input type="submit" class="button special" value="Sign Up">
 										</form>
 									</section>
 								</div>
@@ -82,3 +112,4 @@
 
 	</body>
 </html>
+
