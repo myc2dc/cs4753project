@@ -1,32 +1,98 @@
 <?php
 
-	$db = new mysqli('localhost', 'root', 'password', 'cs4753');
+    $db = new mysqli('localhost', 'root', '', 'cs4753');
 
-	if (isset($_POST['firstname']) && isset($_POST['email']) && isset($_POST['zipcode'])) {
-	  	$firstName = $_POST["firstname"];
-	  	$lastName = $_POST["lastname"];
-	  	$email = $_POST["email"];
-	  	$address = $_POST["address"];
-	  	$city = $_POST["city"];
-	  	$state = $_POST["state"];
-	  	$zipcode = $_POST["zipcode"];
-	  	
-	  	//escape everything
-	  	$firstName = mysql_real_escape_string(trim($firstName));
-       	$lastName = mysql_real_escape_string(trim($lastName));
-       	$email = mysql_real_escape_string(trim($email));
-       	$address = mysql_real_escape_string(trim($address));
-       	$city = mysql_real_escape_string(trim($city));
-       	$state = mysql_real_escape_string(trim($state));
-       	$zipcode = mysql_real_escape_string(trim($zipcode));
+    $firstNameErr = $lastNameErr = $emailErr = $addressErr = $cityErr = $stateErr = $zipCodeErr = "";
+    $firstName = $lastName = $email = $address = $city = $state = $zipCode = "";
 
-       	$query = "INSERT INTO siteUsers VALUES('userNum', '$firstName', '$lastName', '$email', '$address', '$city', '$state', '$zipcode')";
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  if (empty($_POST["firstName"])) {
+    $firstNameErr = "* First name is required";
+  } else {
+    $firstName = test_input($_POST["firstName"]);
+    // check if first name only contains letters and whitespace
+    if (!preg_match("/^[a-zA-Z]\S*$/",$firstName)) {
+      $firstNameErr = "* Invalid format. Please use only letters.";
+    }
+  }
+
+  if (empty($_POST["lastName"])) {
+    $lastNameErr = "* Last name is required";
+  } else {
+    $lastName = test_input($_POST["lastName"]);
+    // check if last name only contains letters and whitespace
+    if (!preg_match("/^[a-zA-Z]\S*$/",$lastName)) {
+      $lastNameErr = "* Invalid format. Please use only letters.";
+    }
+  }
+
+  if (empty($_POST["email"])) {
+    $emailErr = "* Email is required";
+  } else {
+    $email = test_input($_POST["email"]);
+    // check if e-mail address is well-formed
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+      $emailErr = "* Invalid email format. Please input your email in the following format: example@gmail.com";
+    }
+  }
+
+  if (empty($_POST["address"])) {
+    $addressErr = "* Address is required";
+  } else {
+    $address = test_input($_POST["address"]);
+    // check if address is well-formed
+    if (!preg_match("/\d+ [0-9a-zA-Z ]+/",$address)) {
+      $addressErr = "* Invalid address format. Please enter the house number and then the street information.";
+    }
+  }
+
+  if (empty($_POST["city"])) {
+    $cityErr = "* City is required";
+  } else {
+    $city = test_input($_POST["city"]);
+    // check if city is well-formed
+    if (!preg_match("/^[a-zA-Z]\S*$/",$city)) {
+      $cityErr = "* Invalid city format. Please use only letters.";
+    }
+  }
+
+  if (empty($_POST["state"])) {
+    $stateErr = "* State is required";
+  } else {
+    $state = test_input($_POST["state"]);
+    // check if state is well-formed
+    if (!preg_match("/\b([a-zA-Z]{2})\b/",$state)) {
+      $stateErr = "* Invalid state format. Please enter the state abbreviation.";
+    }
+  }
+
+  if (empty($_POST["zipCode"])) {
+    $zipCodeErr = "* Zip Code is required";
+  } else {
+    $zipCode = test_input($_POST["zipCode"]);
+    // check if zip code is well-formed
+    if (!preg_match("/^[0-9]{5}$/",$zipCode)) {
+      $zipCodeErr = "* Invalid zip code format. Please enter only five digits.";
+    }
+  }
+
+  if ($zipCodeErr == "" && $stateErr == "" && $cityErr == "" && $addressErr == "" && $emailErr == "" && $lastNameErr == "" && $firstNameErr == "") {
+
+       	$query = "INSERT INTO siteUsers VALUES('userNum', '$firstName', '$lastName', '$email', '$address', '$city', '$state', '$zipCode')";
        	$db->query($query) or die ("Invalid insert " . $db->error);
 
        	echo '<script language="javascript">';
 		echo 'alert("You have successfully signed up!")';
 		echo '</script>';
     }
+}
+
+function test_input($data) {
+  $data = trim($data);
+  $data = stripslashes($data);
+  $data = htmlspecialchars($data);
+  return $data;
+}
 ?>
 
 <!--
@@ -65,7 +131,7 @@
 
 					<header class="special container">
 						<span class="icon fa-mobile"></span>
-						<h2><strong>SIGN UP HERE</strong></h2>
+						<h2><strong>SIGN UP</strong></h2>
 					</header>
 
 					<!-- One -->
@@ -74,22 +140,22 @@
 							<!-- Content -->
 								<div class="content">
 									<section>
-										<form action="signup.php" method="post">
+										<form action="signup.php" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
   											First Name: 
-											<input type="text" name="firstname">
+											<input type="text" name="firstName"><?php echo $firstNameErr;?></span><br><br>
 											Last name:
-											<input type="text" name="lastname">
+											<input type="text" name="lastName"> <?php echo $lastNameErr;?></span><br><br>
 											Email:
-											<input type="text" name="email">
+											<input type="text" name="email"><?php echo $emailErr;?></span><br><br>
 											Address: 
-											<input type="text" name="address">
+											<input type="text" name="address"><?php echo $addressErr;?></span><br><br>
 											City: 
-											<input type="text" name="city">
+											<input type="text" name="city"><?php echo $cityErr;?></span><br><br>
 											State:
-											<input type="text" name="state">
-											ZipCode: 
-											<input type="text" name="zipcode">
-											<input type="submit" class="button special" value="Sign Up">
+											<input type="text" name="state"><?php echo $stateErr;?></span><br><br>
+											Zip Code:
+											<input type="text" name="zipCode"><?php echo $zipCodeErr;?></span><br><br>
+											<input type="submit" class="button special" name="submit" value="Sign Up">
 										</form>
 									</section>
 								</div>

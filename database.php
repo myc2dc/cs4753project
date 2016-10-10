@@ -1,5 +1,5 @@
 <?php
-$db = new mysqli('localhost', 'root', 'password', 'cs4753');
+$db = new mysqli('localhost', 'root', '', 'cs4753');
 
 $result = $db->query("CREATE TABLE siteUsers (
 	userNum INT PRIMARY KEY AUTO_INCREMENT, 
