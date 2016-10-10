@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   } else {
     $firstName = test_input($_POST["firstName"]);
     // check if first name only contains letters and whitespace
-    if (!preg_match("/^[a-zA-Z]\S*$/",$firstName)) {
+    if (!preg_match("/^[a-zA-Z]*$/",$firstName) || (trim($firstName) == '')) {
       $firstNameErr = "* Invalid format. Please use only letters.";
     }
   }
@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   } else {
     $lastName = test_input($_POST["lastName"]);
     // check if last name only contains letters and whitespace
-    if (!preg_match("/^[a-zA-Z]\S*$/",$lastName)) {
+    if (!preg_match("/^[a-zA-Z]*$/",$lastName) || (trim($lastName) == '')) {
       $lastNameErr = "* Invalid format. Please use only letters.";
     }
   }
@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   } else {
     $address = test_input($_POST["address"]);
     // check if address is well-formed
-    if (!preg_match("/\d+ [0-9a-zA-Z ]+/",$address)) {
+    if (!preg_match("/^([0-9]+ )(([a-zA-Z])+( )?)+(([.#])?( )?[0-9]+?)?$/",$address)) {
       $addressErr = "* Invalid address format. Please enter the house number and then the street information.";
     }
   }
@@ -51,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   } else {
     $city = test_input($_POST["city"]);
     // check if city is well-formed
-    if (!preg_match("/^[a-zA-Z]\S*$/",$city)) {
+    if (!preg_match("/^[a-zA-Z]*$/",$city) || (trim($city) == '')) {
       $cityErr = "* Invalid city format. Please use only letters.";
     }
   }
@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   } else {
     $state = test_input($_POST["state"]);
     // check if state is well-formed
-    if (!preg_match("/\b([a-zA-Z]{2})\b/",$state)) {
+    if (!preg_match("/\b([a-zA-Z]{2})\b$/",$state)) {
       $stateErr = "* Invalid state format. Please enter the state abbreviation.";
     }
   }
@@ -81,9 +81,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
        	$query = "INSERT INTO siteUsers VALUES('userNum', '$firstName', '$lastName', '$email', '$address', '$city', '$state', '$zipCode')";
        	$db->query($query) or die ("Invalid insert " . $db->error);
 
-       	echo '<script language="javascript">';
+		echo '<script language="javascript">';
 		echo 'alert("You have successfully signed up!")';
 		echo '</script>';
+		unset($_POST);
     }
 }
 
@@ -142,20 +143,20 @@ function test_input($data) {
 									<section>
 										<form action="signup.php" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
   											First Name: 
-											<input type="text" name="firstName"><?php echo $firstNameErr;?></span><br><br>
+											<input type="text" name="firstName" placeholder="Chandler"><?php echo $firstNameErr;?></span><br><br>
 											Last name:
-											<input type="text" name="lastName"> <?php echo $lastNameErr;?></span><br><br>
+											<input type="text" name="lastName" placeholder="Bing"> <?php echo $lastNameErr;?></span><br><br>
 											Email:
-											<input type="text" name="email"><?php echo $emailErr;?></span><br><br>
+											<input type="text" name="email" placeholder="chander.bing@gmail.com"><?php echo $emailErr;?></span><br><br>
 											Address: 
-											<input type="text" name="address"><?php echo $addressErr;?></span><br><br>
+											<input type="text" name="address" placeholder="1234 Happy Lane Apt. 506"><?php echo $addressErr;?></span><br><br>
 											City: 
-											<input type="text" name="city"><?php echo $cityErr;?></span><br><br>
+											<input type="text" name="city" placeholder="Fairfax"><?php echo $cityErr;?></span><br><br>
 											State:
-											<input type="text" name="state"><?php echo $stateErr;?></span><br><br>
+											<input type="text" name="state" placeholder="VA"><?php echo $stateErr;?></span><br><br>
 											Zip Code:
-											<input type="text" name="zipCode"><?php echo $zipCodeErr;?></span><br><br>
-											<input type="submit" class="button special" name="submit" value="Sign Up">
+											<input type="text" name="zipCode" placeholder="22030"><?php echo $zipCodeErr;?></span><br><br>
+											<center><input type="submit" class="button special" name="submit" value="Sign Up"></center>
 										</form>
 									</section>
 								</div>
